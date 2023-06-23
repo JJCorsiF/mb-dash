@@ -24,10 +24,11 @@ sudo mysql
 
 or if you configured the **root** account password: `mysql -u root -p`
 
-### Create a new database and use it:
+### Create the databases needed:
 
 ```sql
-CREATE DATABASE mb-dash;
+CREATE DATABASE mb_dash;
+CREATE DATABASE mb_dash_tests;
 use mb_dash;
 ```
 
@@ -37,10 +38,11 @@ use mb_dash;
 CREATE USER 'mb-dash-app'@'localhost' IDENTIFIED BY '#AsTr0nGSeCrEt.D0NtTeLlAnYoNe';
 ```
 
-### Grant enough permissions to the database we just created
+### Grant enough permissions to the databases we just created
 
 ```sql
-GRANT ALL PRIVILEGES ON mb-dash.* TO 'mb-dash-app'@'localhost';
+GRANT ALL PRIVILEGES ON mb_dash.* TO 'mb-dash-app'@'localhost';
+GRANT ALL PRIVILEGES ON mb_dash_tests.* TO 'mb-dash-app'@'localhost';
 ```
 
 ## Installing dependencies
@@ -65,7 +67,7 @@ npm install
 
 ## Setting up the app to use the created database
 
-### Update the .env database settings:
+### Rename the .env.example to .env and update it with your database settings:
 
 ```
 (...)
@@ -74,6 +76,21 @@ DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=mb_dash
+DB_USERNAME=mb-dash-app
+DB_PASSWORD='#AsTr0nGSeCrEt.D0NtTeLlAnYoNe'
+
+(...)
+```
+
+### Duplicate the .env file, call it .env.testing and update it with your test database settings:
+
+```
+(...)
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=mb_dash_tests
 DB_USERNAME=mb-dash-app
 DB_PASSWORD='#AsTr0nGSeCrEt.D0NtTeLlAnYoNe'
 
@@ -93,6 +110,12 @@ php artisan db:seed
 ```
 
 ---
+
+### To run the tests:
+
+```bash
+php artisan test --coverage
+```
 
 ### To run the application:
 
