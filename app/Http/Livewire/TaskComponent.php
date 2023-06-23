@@ -81,7 +81,7 @@ class TaskComponent extends Component
 
     public function saveAssignee() {
         if ($this->task) {
-            $this->task->user_id = $this->assigneeId;
+            $this->task->assignee_id = $this->assigneeId;
             $this->task->save();
             $this->task = TaskModel::find($this->task->id)->first();
         }

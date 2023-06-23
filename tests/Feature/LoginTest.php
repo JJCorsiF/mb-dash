@@ -1,5 +1,10 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+
 it('redirects to the login page if not logged in', function () {
     //when
     $response = $this->get('/');
@@ -11,19 +16,23 @@ it('redirects to the login page if not logged in', function () {
 
 it('redirects to the dashboard page when logged in', function () {
     //given
-    $response = $this->post('/login', [
-        '_token' => '9hy6VFCnf5TDIYJ28yDrUEDBOoUduLFCct1ZtuKY',
-        'email' => 'admin@mbdash.com',
-        'password' => "#KeEpItSeCr3t",
+    $email = 'admin@mbdash.com';
+    $password = '#KeEpItSeCr3t';
+    $hashedPassword = Hash::make($password);
+    User::create([
+        'email' => $email,
+        'password' => $hashedPassword,
     ]);
 
     //when
-    $responseRoot = $this->get('/');
+    $response = $this->post('/login', [
+        'email' => $email,
+        'password' => $password,
+    ]);
 
     //then
     $response->assertSessionMissing('errors');
     $response->assertSessionHasNoErrors();
-    $responseRoot->assertStatus(302);
-    //...
-    $responseRoot->assertRedirect('/dashboard');
+    $response->assertStatus(302);
+    $response->assertRedirect('/dashboard');
 });

@@ -35,7 +35,7 @@ class TasksTableSeeder extends Seeder
                 'archived' => $faker->boolean(),
                 'time_spent' => $faker->randomNumber(8),
 
-                'user_id' => ($randomStatus === 'To Do') ? null : User::all()->random()->id,
+                'assignee_id' => ($randomStatus === 'To Do') ? null : User::all()->random()->id,
             ]);
         }
     }

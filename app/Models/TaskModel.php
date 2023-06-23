@@ -15,6 +15,6 @@ class TaskModel extends Model
     protected $fillable = ['name', 'description', 'status'];
 
     public function assignee(): BelongsTo {
-        return $this->belongsTo(User::class, 'user_id', 'id'); //->withDefault();
+        return $this->belongsTo(User::class, 'assignee_id', 'id'); //->withDefault();
     }
 }

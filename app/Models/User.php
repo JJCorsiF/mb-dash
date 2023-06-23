@@ -45,6 +45,6 @@ class User extends Authenticatable
     ];
 
     public function tasks(): HasMany {
-        return $this->hasMany(TaskModel::class, 'user_id', 'id');
+        return $this->hasMany(TaskModel::class, 'assignee_id', 'id');
     }
 }

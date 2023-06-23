@@ -11,6 +11,8 @@ use Tests\TestCase;
 
 class TaskComponentTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
     public function the_component_can_render()
     {
@@ -44,5 +46,29 @@ class TaskComponentTest extends TestCase
             ->whereNotNull('date_done')
             ->exists()
         );
+        // $this->assertDatabaseHas('tasks', ['name' => 'an existing task name', 'status' => 'Done']);
+    }
+
+    /** @test */
+    public function task_can_be_deleted() {
+        //given
+        $component = Livewire::test(
+            TaskComponent::class,
+            [
+                'task' => TaskModel::create([
+                    'id' => 2,
+                    'name' => 'another existing task name'
+                ])
+            ]
+        );
+
+        //when
+        $component->call('delete');
+
+        //then
+        $this->assertNull(
+            TaskModel::find(2)
+        );
+        // $this->assertDatabaseMissing('tasks', ['name' => 'another existing task name']);
     }
 }

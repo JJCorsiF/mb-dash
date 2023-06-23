@@ -38,7 +38,7 @@
                 <ul>
                     @if ($users)
                         @foreach ($users as $user)
-                            <li><a :class="{'active': {{ $assignee !== null && $assignee->id === $user->id ? 1 : 0 }} }" class="dropdown-item" {{$task->user_id !== null && $task->user_id === $user->id ? 'aria-current=true' : ''}} wire:click="setAssignee({{ $user->id }});" href="#">{{ $user->name }}</a></li>
+                            <li><a :class="{'active': {{ $assignee !== null && $assignee->id === $user->id ? 1 : 0 }} }" class="dropdown-item" {{$assignee !== null && $assignee === $user->id ? 'aria-current=true' : ''}} wire:click="setAssignee({{ $user->id }});" href="#">{{ $user->name }}</a></li>
                         @endforeach
                     @endif
                 </ul>
