@@ -10,8 +10,6 @@ class TaskComponent extends Component
 {
     public ?TaskModel $task = null;
 
-    private $assigneeId;
-
     public $searchAssignee;
     public $showSearchInput;
 
@@ -50,12 +48,6 @@ class TaskComponent extends Component
 
     public function render()
     {
-        if ($this->task) {
-            $this->assigneeId = $this->task->assignee ? $this->task->assignee->id : null;
-        }
-
-        $this->saveAssignee();
-
         $users = User::orderBy('name', 'ASC');
 
         if ($this->searchAssignee) {
@@ -79,9 +71,9 @@ class TaskComponent extends Component
         session()->flash('message', 'Task successfully updated.');
     }
 
-    public function saveAssignee() {
-        if ($this->task) {
-            $this->task->assignee_id = $this->assigneeId;
+    public function saveAssignee(User $assignee) {
+        if ($this->task && $assignee->id) {
+            $this->task->assignee_id = $assignee->id;
             $this->task->save();
             $this->task = TaskModel::find($this->task->id)->first();
         }
@@ -89,10 +81,6 @@ class TaskComponent extends Component
         $this->emitTo('search-tasks', 'taskAssigned');
 
         session()->flash('message', 'Task assignee updated.');
-    }
-
-    public function setAssignee(User $assignee) {
-        $this->assigneeId = $assignee->id;
     }
 
     public function toggleShowSearchInput() {
