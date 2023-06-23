@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\TaskModel;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -32,7 +33,9 @@ class TasksTableSeeder extends Seeder
                 'date_closed' => ($randomStatus === 'Closed') ? $faker->dateTime() : null,
                 'date_done' => ($randomStatus === 'Done') ? $faker->dateTime() : null,
                 'archived' => $faker->boolean(),
-                'time_spent' => $faker->randomNumber(8)
+                'time_spent' => $faker->randomNumber(8),
+
+                'user_id' => ($randomStatus === 'To Do') ? null : User::all()->random()->id,
             ]);
         }
     }

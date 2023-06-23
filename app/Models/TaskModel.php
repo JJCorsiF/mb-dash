@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TaskModel extends Model
 {
@@ -12,4 +13,8 @@ class TaskModel extends Model
     protected $table = 'tasks';
 
     protected $fillable = ['name', 'description', 'status'];
+
+    public function assignee(): BelongsTo {
+        return $this->belongsTo(User::class, 'user_id', 'id'); //->withDefault();
+    }
 }

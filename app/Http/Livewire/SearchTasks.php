@@ -22,7 +22,14 @@ class SearchTasks extends Component
         'searchStatus' => ['except' => ''],
     ];
 
-    protected $listeners = ['taskCreated', 'taskCompleted'];
+    protected $listeners = ['taskCreated', 'taskCompleted', 'taskAssigned'];
+
+    public function taskAssigned() {
+        $this->resetPage();
+
+        $this->mount();
+        $this->render();
+    }
 
     public function taskCompleted() {
         $this->resetPage();
@@ -34,7 +41,7 @@ class SearchTasks extends Component
 
     public function render()
     {
-        $searchResults = TaskModel::orderBy('date_created', 'DESC');
+        $searchResults = TaskModel::with('assignee');
 
         if ($this->searchName) {
             $searchResults = $searchResults->where('name', 'like', "%{$this->searchName}%");
@@ -48,7 +55,7 @@ class SearchTasks extends Component
             $searchResults = $searchResults->where('status', 'like', "%{$this->searchStatus}%");
         }
 
-        $tasks = $searchResults->paginate(16);
+        $tasks = $searchResults->orderBy('date_created', 'DESC')->paginate(16);
 
         return view('livewire.search-tasks', [
             'tasks' => $tasks->total() > 0 ? $tasks : [],

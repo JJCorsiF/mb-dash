@@ -18,7 +18,7 @@
         </button>
     </div>
 
-    @if($tasks)
+    @if ($tasks)
         <table class="table table-hover table-bordered sortable" id="mbDashTable">
             {{-- <caption>Tasks</caption> --}}
             <thead>
@@ -26,6 +26,7 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Status</th>
+                    <th>Assignee</th>
                     <th>Date created</th>
                     <th>Date updated</th>
                     <th>Due date</th>

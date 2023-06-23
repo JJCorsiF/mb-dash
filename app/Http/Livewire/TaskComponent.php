@@ -3,11 +3,17 @@
 namespace App\Http\Livewire;
 
 use App\Models\TaskModel;
+use App\Models\User;
 use Livewire\Component;
 
 class TaskComponent extends Component
 {
-    public TaskModel $task;
+    public ?TaskModel $task = null;
+
+    private $assigneeId;
+
+    public $searchAssignee;
+    public $showSearchInput;
 
     protected $rules = [
         'task.name' => 'required|string|min:1',
@@ -18,6 +24,10 @@ class TaskComponent extends Component
         'task.name.required' => 'The task name cannot be empty.',
         'task.description.max' => 'The task description can\'t be too long.',
     ];
+
+    public function mount() {
+        $this->showSearchInput = false;
+    }
 
     public function complete() {
         // $this->validate();
@@ -40,7 +50,25 @@ class TaskComponent extends Component
 
     public function render()
     {
-        return view('livewire.task');
+        if ($this->task) {
+            $this->assigneeId = $this->task->assignee ? $this->task->assignee->id : null;
+        }
+
+        $this->saveAssignee();
+
+        $users = User::orderBy('name', 'ASC');
+
+        if ($this->searchAssignee) {
+            $users->where('name', 'like', "%{$this->searchAssignee}%");
+        }
+
+        $users = $users->get(); //$users->paginate(6);
+
+        return view('livewire.task', [
+            'assignee' => $this->task ? $this->task->assignee : null,
+            'showSearchInput' => $this->showSearchInput,
+            'users' => $users, //$users->total() > 0 ? $users : [],
+        ]);
     }
 
     public function save() {
@@ -51,7 +79,31 @@ class TaskComponent extends Component
         session()->flash('message', 'Task successfully updated.');
     }
 
+    public function saveAssignee() {
+        if ($this->task) {
+            $this->task->user_id = $this->assigneeId;
+            $this->task->save();
+            $this->task = TaskModel::find($this->task->id)->first();
+        }
+
+        $this->emitTo('search-tasks', 'taskAssigned');
+
+        session()->flash('message', 'Task assignee updated.');
+    }
+
+    public function setAssignee(User $assignee) {
+        $this->assigneeId = $assignee->id;
+    }
+
+    public function toggleShowSearchInput() {
+        $this->showSearchInput = !$this->showSearchInput;
+    }
+
     public function updated($propertyName) {
         $this->validateOnly($propertyName);
+    }
+
+    public function updatingSearch() {
+        $this->resetPage();
     }
 }
